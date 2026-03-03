@@ -1,0 +1,11 @@
+<Page x:Class="AtelierCK.Views.QuotesPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Padding="20" RowSpacing="10">
+    <TextBlock Text="Quotes" FontSize="30" Foreground="#C9A227"/>
+    <StackPanel Margin="0,50,0,0" Spacing="8">
+      <TextBox Header="Quote Number"/>
+      <TextBox Header="Line Items JSON" AcceptsReturn="True" Height="140"/>
+      <Button Content="Save Quote"/>
+      <Button Content="Generate PDF (Server)"/>
+    </StackPanel>
+  </Grid>
+</Page>

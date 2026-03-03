@@ -1,0 +1,18 @@
+<Page x:Class="AtelierCK.Views.ProjectsPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Padding="20" RowSpacing="10">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+    <TextBlock Text="Projects" FontSize="30" Foreground="#C9A227"/>
+    <Grid Grid.Row="1" ColumnSpacing="12">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <ListView>
+        <ListViewItem Content="Kitchen Renovation | Open"/>
+      </ListView>
+      <StackPanel Grid.Column="1" Spacing="8">
+        <TextBox Header="Project Name"/>
+        <ComboBox Header="Status"><ComboBoxItem Content="Open"/><ComboBoxItem Content="On Hold"/><ComboBoxItem Content="Completed"/></ComboBox>
+        <Button Content="Save Project"/>
+        <Button Content="Add Timeline Update + Photos"/>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Page>

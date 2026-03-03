@@ -1,0 +1,19 @@
+<Page x:Class="AtelierCK.Views.SettingsPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Padding="20" ColumnSpacing="14">
+    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+    <StackPanel Spacing="8">
+      <TextBlock Text="Company Settings" FontSize="24" Foreground="#C9A227"/>
+      <TextBox Header="Company Name"/>
+      <TextBox Header="Contact Email"/>
+      <TextBox Header="Phone"/>
+      <Button Content="Save Company"/>
+    </StackPanel>
+    <StackPanel Grid.Column="1" Spacing="8">
+      <TextBlock Text="Numbering + Taxes + Users" FontSize="24" Foreground="#C9A227"/>
+      <TextBox Header="Invoice Prefix"/>
+      <TextBox Header="Tax Rate %"/>
+      <Button Content="Manage Users"/>
+      <Button Content="Save Policies"/>
+    </StackPanel>
+  </Grid>
+</Page>
