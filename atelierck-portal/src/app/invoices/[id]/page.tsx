@@ -1,0 +1,1 @@
+'use client'; import {createStripeCheckoutSession} from '../../../lib/api'; export default function Page({params}:{params:{id:string}}){return <main><h1>Invoice {params.id}</h1><button onClick={async()=>{const d=await createStripeCheckoutSession(params.id); if(d.url) location.href=d.url;}}>Pay</button><a href='#'>Download PDF</a></main>}
