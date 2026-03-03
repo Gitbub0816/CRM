@@ -1,0 +1,8 @@
+name: apple-ci
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: xcodebuild -version

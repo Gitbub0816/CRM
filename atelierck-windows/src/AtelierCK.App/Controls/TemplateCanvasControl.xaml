@@ -1,0 +1,10 @@
+<UserControl x:Class="AtelierCK.Controls.TemplateCanvasControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Border BorderBrush="#C9A227" BorderThickness="1" Padding="12" CornerRadius="8">
+    <StackPanel>
+      <TextBlock Text="Template Canvas" FontSize="18"/>
+      <ItemsControl>
+        <TextBlock Text="Drag component blocks here"/>
+      </ItemsControl>
+    </StackPanel>
+  </Border>
+</UserControl>

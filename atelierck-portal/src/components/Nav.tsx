@@ -1,0 +1,1 @@
+export function Nav(){return <nav><a href="/invoices">Invoices</a> | <a href="/projects">Projects</a> | <a href="/schedule">Schedule</a> | <a href="/messages">Messages</a></nav>}

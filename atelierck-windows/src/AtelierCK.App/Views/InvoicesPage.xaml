@@ -1,0 +1,20 @@
+<Page x:Class="AtelierCK.Views.InvoicesPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Padding="20" RowSpacing="12">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+    <TextBlock Text="Invoices" FontSize="30" Foreground="#C9A227"/>
+    <Grid Grid.Row="1" ColumnSpacing="14">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <ListView>
+        <ListViewItem Content="INV-000001 | Issued | $12,800.00"/>
+      </ListView>
+      <StackPanel Grid.Column="1" Spacing="8">
+        <TextBox Header="Invoice Number"/>
+        <TextBox Header="Tax %"/>
+        <TextBox Header="Discount"/>
+        <TextBox Header="Deposit"/>
+        <Button Content="Generate PDF (Server)"/>
+        <Button Content="Post Payment"/>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Page>

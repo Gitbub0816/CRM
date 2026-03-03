@@ -1,0 +1,18 @@
+<Page x:Class="AtelierCK.Views.ShellPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <NavigationView PaneDisplayMode="Left" IsBackButtonVisible="Collapsed">
+    <NavigationView.MenuItems>
+      <NavigationViewItem Content="Dashboard"/>
+      <NavigationViewItem Content="Clients"/>
+      <NavigationViewItem Content="Projects"/>
+      <NavigationViewItem Content="Quotes"/>
+      <NavigationViewItem Content="Invoices"/>
+      <NavigationViewItem Content="Payments/Receipts"/>
+      <NavigationViewItem Content="Schedule"/>
+      <NavigationViewItem Content="Files"/>
+      <NavigationViewItem Content="Reports"/>
+      <NavigationViewItem Content="Settings"/>
+      <NavigationViewItem Content="Template Studio"/>
+    </NavigationView.MenuItems>
+    <Frame/>
+  </NavigationView>
+</Page>
