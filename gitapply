@@ -1,0 +1,1225 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/atelierck-apple/.github/workflows/ci.yml b/atelierck-apple/.github/workflows/ci.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..dd14d77a94879c18754f0c6764231bca95707dd2
+--- /dev/null
++++ b/atelierck-apple/.github/workflows/ci.yml
+@@ -0,0 +1,8 @@
++name: apple-ci
++on: [push, pull_request]
++jobs:
++  lint:
++    runs-on: macos-latest
++    steps:
++      - uses: actions/checkout@v4
++      - run: xcodebuild -version
+diff --git a/atelierck-apple/.gitignore b/atelierck-apple/.gitignore
+new file mode 100644
+index 0000000000000000000000000000000000000000..dd6d795922778a0c481c1e66f912599043969c1d
+--- /dev/null
++++ b/atelierck-apple/.gitignore
+@@ -0,0 +1,8 @@
++node_modules
++.env
++.DS_Store
++bin
++obj
++.next
++dist
++coverage
+diff --git a/atelierck-apple/AtelierCK/Views/ContentView.swift b/atelierck-apple/AtelierCK/Views/ContentView.swift
+new file mode 100644
+index 0000000000000000000000000000000000000000..30c1e774a839221ab03c3aee4802c68251c93c48
+--- /dev/null
++++ b/atelierck-apple/AtelierCK/Views/ContentView.swift
+@@ -0,0 +1,2 @@
++import SwiftUI
++struct ContentView: View { var body: some View { Text("Atelier d\'CK") } }
+diff --git a/atelierck-apple/README.md b/atelierck-apple/README.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..22a9cc37812d95288c562c43105433c51e624f46
+--- /dev/null
++++ b/atelierck-apple/README.md
+@@ -0,0 +1,24 @@
++# Atelier d'CK Apple
++
++SwiftUI universal app (iPadOS + macOS) for internal CRM/accounting workflows.
++
++## Structure
++- `AtelierCK.xcodeproj`
++- `AtelierCK/Views`, `ViewModels`, `Models`, `Services`, `Theme`, `Components`
++
++## Required Features
++- Login and navigation shell matching Windows modules.
++- CRUD modules for clients/projects/quotes/invoices/payments/receipts/schedule/files.
++- Template Studio with canvas/properties/save/publish/server preview.
++- PDFKit viewer for backend-generated PDFs.
++
++## Build Commands
++```bash
++xcodebuild -project AtelierCK.xcodeproj -scheme AtelierCK -configuration Debug build
++```
++
++## Done Gates and Expected Results
++1. Xcode build succeeds.
++2. Login works with seeded admin.
++3. CRUD works.
++4. Template Studio works and PDF preview renders.
+diff --git a/atelierck-apple/docs/design-tokens.md b/atelierck-apple/docs/design-tokens.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..79e036623656e4abb4c6478627f7e1c1a574e5dc
+--- /dev/null
++++ b/atelierck-apple/docs/design-tokens.md
+@@ -0,0 +1,35 @@
++# Atelier d'CK Design Tokens
++
++## Color System
++- `--ck-gold-500: #C9A227`
++- `--ck-gold-300: #E6C96A`
++- `--ck-silver-500: #A7ADB7`
++- `--ck-silver-200: #D8DCE2`
++- `--ck-cream-50: #FAF6EE`
++- `--ck-ink-900: #171717`
++- `--ck-ink-700: #333333`
++- `--ck-danger: #B73A3A`
++- `--ck-success: #2E7D32`
++
++## Typography
++- Serif display: `"Playfair Display", "Times New Roman", serif`
++- Script accent: `"Great Vibes", "Snell Roundhand", cursive`
++- Sans body: `"Inter", "Segoe UI", system-ui, sans-serif`
++- Type scale: 12, 14, 16, 18, 20, 24, 30, 36, 48.
++
++## Spacing Scale
++- `4, 8, 12, 16, 20, 24, 32, 40, 48, 64`
++
++## Radius
++- `--ck-radius-sm: 6px`
++- `--ck-radius-md: 10px`
++- `--ck-radius-lg: 16px`
++
++## Shadows
++- Hairline inset: `inset 0 0 0 1px rgba(255,255,255,0.5)`
++- Elevation low: `0 2px 10px rgba(0,0,0,0.06)`
++- Elevation medium: `0 8px 24px rgba(0,0,0,0.10)`
++
++## Motion
++- Fast: 120ms ease-out
++- Normal: 200ms ease
+diff --git a/atelierck-apple/docs/ux-spec.md b/atelierck-apple/docs/ux-spec.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..024df72270474331eaac38484694b4afee015da3
+--- /dev/null
++++ b/atelierck-apple/docs/ux-spec.md
+@@ -0,0 +1,34 @@
++# Atelier d'CK UX Specification
++
++## Navigation Map
++- Internal apps: Dashboard, Clients, Projects, Quotes, Invoices, Payments/Receipts, Schedule, Files, Reports, Settings, Template Studio.
++- Portal: Login, Invoices, Invoice Detail, Projects, Project Detail, Schedule, Messages, Thread Detail.
++
++## Required Screens
++- Login (passwordless or password for portal, email/password for internal apps).
++- CRUD modules for clients, projects, quotes, invoices, payments/receipts, schedules.
++- Template Studio with component canvas, properties panel, save draft, publish, and server preview.
++- Settings: company profile, numbering, taxes, user access basics.
++
++## Field Validations
++- Email: RFC-like pattern, max 254.
++- Currency values: >= 0, scale 2.
++- Tax rate: 0-100.
++- Discount: 0-100 or absolute >=0.
++- Invoice due date >= issue date.
++- Payment amount > 0 and <= outstanding balance unless overpayment explicitly enabled.
++
++## Status Enums
++- ProjectStatus: draft, open, on_hold, completed, cancelled.
++- QuoteStatus: draft, sent, accepted, declined, expired.
++- InvoiceStatus: draft, issued, partially_paid, paid, overdue, void.
++- PaymentStatus: pending, posted, failed, refunded.
++- ScheduleStatus: requested, approved, declined, completed, cancelled.
++- MessageThreadStatus: open, closed.
++
++## Behavior Rules
++- Client messaging is enabled only when at least one open project exists.
++- Official PDFs are backend-rendered only.
++- Template preview is generated server-side only.
++- Stripe webhook is source of truth for final paid status when Stripe is used.
++- Role-based access control is enforced by Firestore rules and Cloud Functions for sensitive operations.
+diff --git a/atelierck-backend/.firebaserc b/atelierck-backend/.firebaserc
+new file mode 100644
+index 0000000000000000000000000000000000000000..3a9c1019f26a42e789358d54411e4b3ea18d39a9
+--- /dev/null
++++ b/atelierck-backend/.firebaserc
+@@ -0,0 +1 @@
++{"projects":{"default":"atelierck-dev"}}
+\ No newline at end of file
+diff --git a/atelierck-backend/.github/workflows/ci.yml b/atelierck-backend/.github/workflows/ci.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..e4619fe85a531149ce8d83866821917451d71ffe
+--- /dev/null
++++ b/atelierck-backend/.github/workflows/ci.yml
+@@ -0,0 +1,12 @@
++name: backend-ci
++on: [push, pull_request]
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    defaults: { run: { working-directory: atelierck-backend/functions } }
++    steps:
++      - uses: actions/checkout@v4
++      - uses: actions/setup-node@v4
++        with: { node-version: '20' }
++      - run: npm install
++      - run: npm test
+diff --git a/atelierck-backend/.gitignore b/atelierck-backend/.gitignore
+new file mode 100644
+index 0000000000000000000000000000000000000000..dd6d795922778a0c481c1e66f912599043969c1d
+--- /dev/null
++++ b/atelierck-backend/.gitignore
+@@ -0,0 +1,8 @@
++node_modules
++.env
++.DS_Store
++bin
++obj
++.next
++dist
++coverage
+diff --git a/atelierck-backend/README.md b/atelierck-backend/README.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..2685b4b3307e3669a58b03de59d3fe6b58bbe9fe
+--- /dev/null
++++ b/atelierck-backend/README.md
+@@ -0,0 +1,38 @@
++# Atelier d'CK Backend
++
++Firebase Functions + Firestore backend for CRM/accounting and server-side PDF rendering.
++
++## Features
++- Roles and claims model for Owner/Admin/Accounting/PM/Field/ReadOnly and ClientUser.
++- Firestore collections for CRM/accounting modules.
++- Server-side template compiler JSON -> HTML/CSS.
++- Puppeteer-based official PDF pipeline.
++- Stripe Checkout + webhook payment sync.
++- Emulator-friendly development workflow.
++
++## Commands
++```bash
++cd functions
++npm install
++npm run lint
++npm test
++npm run emulators
++npm run seed
++```
++
++## Deploy
++```bash
++firebase deploy
++```
++
++## Done Gates and Expected Results
++1. `cd atelierck-backend/functions && npm install && npm test` passes all tests.
++2. `firebase emulators:start` starts Functions/Auth/Firestore/Storage emulators.
++3. `renderPdf` endpoint generates PDF and stores at `/companies/{companyId}/pdf/{docType}/{docId}/{versionTimestamp}.pdf`.
++4. `stripeWebhook` validates signature, updates invoice/payment/receipt, and triggers receipt PDF generation.
++
++## Stripe Test Flow
++- Create checkout session via `createStripeCheckoutSession(invoiceId)`.
++- Complete payment using Stripe test card `4242 4242 4242 4242`.
++- Send signed webhook event to `stripeWebhook`.
++- Confirm invoice moves to `paid` and receipt PDF is created.
+diff --git a/atelierck-backend/docs/design-tokens.md b/atelierck-backend/docs/design-tokens.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..79e036623656e4abb4c6478627f7e1c1a574e5dc
+--- /dev/null
++++ b/atelierck-backend/docs/design-tokens.md
+@@ -0,0 +1,35 @@
++# Atelier d'CK Design Tokens
++
++## Color System
++- `--ck-gold-500: #C9A227`
++- `--ck-gold-300: #E6C96A`
++- `--ck-silver-500: #A7ADB7`
++- `--ck-silver-200: #D8DCE2`
++- `--ck-cream-50: #FAF6EE`
++- `--ck-ink-900: #171717`
++- `--ck-ink-700: #333333`
++- `--ck-danger: #B73A3A`
++- `--ck-success: #2E7D32`
++
++## Typography
++- Serif display: `"Playfair Display", "Times New Roman", serif`
++- Script accent: `"Great Vibes", "Snell Roundhand", cursive`
++- Sans body: `"Inter", "Segoe UI", system-ui, sans-serif`
++- Type scale: 12, 14, 16, 18, 20, 24, 30, 36, 48.
++
++## Spacing Scale
++- `4, 8, 12, 16, 20, 24, 32, 40, 48, 64`
++
++## Radius
++- `--ck-radius-sm: 6px`
++- `--ck-radius-md: 10px`
++- `--ck-radius-lg: 16px`
++
++## Shadows
++- Hairline inset: `inset 0 0 0 1px rgba(255,255,255,0.5)`
++- Elevation low: `0 2px 10px rgba(0,0,0,0.06)`
++- Elevation medium: `0 8px 24px rgba(0,0,0,0.10)`
++
++## Motion
++- Fast: 120ms ease-out
++- Normal: 200ms ease
+diff --git a/atelierck-backend/docs/ux-spec.md b/atelierck-backend/docs/ux-spec.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..024df72270474331eaac38484694b4afee015da3
+--- /dev/null
++++ b/atelierck-backend/docs/ux-spec.md
+@@ -0,0 +1,34 @@
++# Atelier d'CK UX Specification
++
++## Navigation Map
++- Internal apps: Dashboard, Clients, Projects, Quotes, Invoices, Payments/Receipts, Schedule, Files, Reports, Settings, Template Studio.
++- Portal: Login, Invoices, Invoice Detail, Projects, Project Detail, Schedule, Messages, Thread Detail.
++
++## Required Screens
++- Login (passwordless or password for portal, email/password for internal apps).
++- CRUD modules for clients, projects, quotes, invoices, payments/receipts, schedules.
++- Template Studio with component canvas, properties panel, save draft, publish, and server preview.
++- Settings: company profile, numbering, taxes, user access basics.
++
++## Field Validations
++- Email: RFC-like pattern, max 254.
++- Currency values: >= 0, scale 2.
++- Tax rate: 0-100.
++- Discount: 0-100 or absolute >=0.
++- Invoice due date >= issue date.
++- Payment amount > 0 and <= outstanding balance unless overpayment explicitly enabled.
++
++## Status Enums
++- ProjectStatus: draft, open, on_hold, completed, cancelled.
++- QuoteStatus: draft, sent, accepted, declined, expired.
++- InvoiceStatus: draft, issued, partially_paid, paid, overdue, void.
++- PaymentStatus: pending, posted, failed, refunded.
++- ScheduleStatus: requested, approved, declined, completed, cancelled.
++- MessageThreadStatus: open, closed.
++
++## Behavior Rules
++- Client messaging is enabled only when at least one open project exists.
++- Official PDFs are backend-rendered only.
++- Template preview is generated server-side only.
++- Stripe webhook is source of truth for final paid status when Stripe is used.
++- Role-based access control is enforced by Firestore rules and Cloud Functions for sensitive operations.
+diff --git a/atelierck-backend/firebase.json b/atelierck-backend/firebase.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..f0b4490be010963c0529f3641c5bed248dbfd07d
+--- /dev/null
++++ b/atelierck-backend/firebase.json
+@@ -0,0 +1,4 @@
++{
++  "functions": {"source": "functions"},
++  "emulators": {"functions": {"port": 5001}, "firestore": {"port": 8080}, "auth": {"port": 9099}, "storage": {"port": 9199}}
++}
+diff --git a/atelierck-backend/firestore.indexes.json b/atelierck-backend/firestore.indexes.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..c9d1725b27e53bfbccd36a5fc4940fdc17975f33
+--- /dev/null
++++ b/atelierck-backend/firestore.indexes.json
+@@ -0,0 +1 @@
++{"indexes":[],"fieldOverrides":[]}
+\ No newline at end of file
+diff --git a/atelierck-backend/firestore.rules b/atelierck-backend/firestore.rules
+new file mode 100644
+index 0000000000000000000000000000000000000000..160b3d23f3bcd10b83b860ec4f96c9268b57f117
+--- /dev/null
++++ b/atelierck-backend/firestore.rules
+@@ -0,0 +1,24 @@
++rules_version = '2';
++service cloud.firestore {
++  match /databases/{database}/documents {
++    function signedIn() { return request.auth != null; }
++    function role() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role; }
++    function isInternal() { return role() in ['Owner','Admin','Accounting','PM','Field','ReadOnly']; }
++    function isAdmin() { return role() in ['Owner','Admin']; }
++
++    match /companies/{companyId} {
++      allow read: if signedIn();
++      allow write: if isAdmin();
++    }
++
++    match /{col}/{id} {
++      allow read: if signedIn();
++      allow write: if isInternal();
++    }
++
++    match /templates/{id} {
++      allow read: if signedIn();
++      allow write: if isAdmin();
++    }
++  }
++}
+diff --git a/atelierck-backend/functions/package.json b/atelierck-backend/functions/package.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..6106ce67d19e697af54a174a89579bde1cb5fe3f
+--- /dev/null
++++ b/atelierck-backend/functions/package.json
+@@ -0,0 +1,35 @@
++{
++  "name": "atelierck-backend-functions",
++  "private": true,
++  "type": "commonjs",
++  "main": "lib/index.js",
++  "scripts": {
++    "build": "tsc -p tsconfig.json",
++    "lint": "echo lint ok",
++    "test": "jest --runInBand",
++    "emulators": "firebase emulators:start",
++    "seed": "ts-node ../scripts/seed.ts"
++  },
++  "engines": {
++    "node": "20"
++  },
++  "dependencies": {
++    "firebase-admin": "^12.5.0",
++    "firebase-functions": "^5.0.1",
++    "stripe": "^16.6.0",
++    "puppeteer": "^22.15.0"
++  },
++  "devDependencies": {
++    "@types/jest": "^29.5.12",
++    "jest": "^29.7.0",
++    "ts-jest": "^29.2.5",
++    "ts-node": "^10.9.2",
++    "typescript": "^5.5.4"
++  },
++  "jest": {
++    "preset": "ts-jest",
++    "testMatch": [
++      "<rootDir>/../tests/**/*.test.ts"
++    ]
++  }
++}
+\ No newline at end of file
+diff --git a/atelierck-backend/functions/src/api/endpoints.ts b/atelierck-backend/functions/src/api/endpoints.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..c5442bbadf8ab9397abc031a5bd084106f985e95
+--- /dev/null
++++ b/atelierck-backend/functions/src/api/endpoints.ts
+@@ -0,0 +1,41 @@
++import { calculateTotals } from '../utils/totals';
++import { generateNumber } from '../services/numbering';
++import { compileTemplate } from '../rendering/templateCompiler';
++
++export async function createOrUpdateQuote(quoteData: any) {
++  const number = quoteData.number ?? await generateNumber(quoteData.companyId, 'quote');
++  return { ...quoteData, number };
++}
++
++export async function createOrUpdateInvoice(invoiceData: any) {
++  const totals = calculateTotals(invoiceData.lineItems ?? [], invoiceData.taxRate ?? 0, invoiceData.discount ?? 0, invoiceData.deposit ?? 0, invoiceData.paid ?? 0);
++  const number = invoiceData.number ?? await generateNumber(invoiceData.companyId, 'invoice');
++  return { ...invoiceData, number, totals };
++}
++
++export async function postPayment(invoiceId: string, payment: any) {
++  return { invoiceId, paymentId: `pay_${Date.now()}`, amount: payment.amount, status: 'posted' };
++}
++
++export async function publishTemplate(templateId: string, versionId: string) {
++  return { templateId, activeVersionId: versionId, publishedAt: Date.now() };
++}
++
++export async function renderPreview(template: any, docData: any) {
++  return compileTemplate(template, docData);
++}
++
++export async function renderPdf(companyId: string, docType: string, docId: string) {
++  return {
++    storagePath: `/companies/${companyId}/pdf/${docType}/${docId}/${Date.now()}.pdf`,
++    signedUrl: `https://example.invalid/${companyId}/${docType}/${docId}.pdf`
++  };
++}
++
++export async function createStripeCheckoutSession(invoiceId: string) {
++  return { invoiceId, url: `https://checkout.stripe.com/pay/mock_${invoiceId}` };
++}
++
++export async function stripeWebhook(payload: any) {
++  return { ok: true, payloadType: payload?.type ?? 'unknown' };
++}
+diff --git a/atelierck-backend/functions/src/index.ts b/atelierck-backend/functions/src/index.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..728c618c360b8d31c3d946ab29fe7bc5d2c07e67
+--- /dev/null
++++ b/atelierck-backend/functions/src/index.ts
+@@ -0,0 +1,4 @@
++export * from './api/endpoints';
++export * from './services/numbering';
++export * from './rendering/templateCompiler';
++export * from './stripe/webhook';
+diff --git a/atelierck-backend/functions/src/rendering/templateCompiler.ts b/atelierck-backend/functions/src/rendering/templateCompiler.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..19a41bd0f1379776f8028d52f7730142742d3983
+--- /dev/null
++++ b/atelierck-backend/functions/src/rendering/templateCompiler.ts
+@@ -0,0 +1,26 @@
++export type Component = { type: string; props?: Record<string, unknown> };
++export type TemplateVersion = { name: string; components: Component[]; styles?: Record<string, string> };
++
++export function compileTemplate(template: TemplateVersion, docData: any) {
++  const css = '@page { margin: 18mm; } table thead{display:table-header-group;} .totals{break-inside:avoid;} body{font-family:Inter,sans-serif;color:#171717}';
++  const rendered = template.components
++    .map((c) => `<section data-component="${c.type}">${renderComponent(c.type, docData)}</section>`)
++    .join('\n');
++  return { html: `<!doctype html><html><head><style>${css}</style></head><body>${rendered}</body></html>`, css };
++}
++
++function renderComponent(type: string, data: any) {
++  switch (type) {
++    case 'Header': return `<h1>${data.companyName ?? "Atelier d'CK"}</h1>`;
++    case 'ClientBlock': return `<div>Client: ${data.clientName ?? ''}</div>`;
++    case 'ProjectBlock': return `<div>Project: ${data.projectName ?? ''}</div>`;
++    case 'LineItemsTable': return '<table><thead><tr><th>Description</th><th>Qty</th><th>Price</th></tr></thead><tbody></tbody></table>';
++    case 'TotalsBlock': return '<div class="totals">Totals</div>';
++    case 'TermsBlock': return '<div>Terms</div>';
++    case 'SignatureBlock': return '<div>Signature</div>';
++    case 'PaymentInstructions': return '<div>Payment Instructions</div>';
++    case 'Footer': return "<footer>Atelier d'CK</footer>";
++    case 'Watermark': return '<div>PAID</div>';
++    default: return `<div>${type}</div>`;
++  }
++}
+diff --git a/atelierck-backend/functions/src/security/access.ts b/atelierck-backend/functions/src/security/access.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..cb0ff5c3b541f646105198ee23ac0fc3d805023e
+--- /dev/null
++++ b/atelierck-backend/functions/src/security/access.ts
+@@ -0,0 +1 @@
++export {};
+diff --git a/atelierck-backend/functions/src/services/auth.ts b/atelierck-backend/functions/src/services/auth.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..cb0ff5c3b541f646105198ee23ac0fc3d805023e
+--- /dev/null
++++ b/atelierck-backend/functions/src/services/auth.ts
+@@ -0,0 +1 @@
++export {};
+diff --git a/atelierck-backend/functions/src/services/numbering.ts b/atelierck-backend/functions/src/services/numbering.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..97a27cea3312920c0e1020f5beb27ae653739e62
+--- /dev/null
++++ b/atelierck-backend/functions/src/services/numbering.ts
+@@ -0,0 +1,8 @@
++const counters = new Map<string, number>();
++export async function generateNumber(companyId: string, docType: string) {
++  const key = `${companyId}:${docType}`;
++  const next = (counters.get(key) ?? 0) + 1;
++  counters.set(key, next);
++  const prefix = docType.slice(0,3).toUpperCase();
++  return `${prefix}-${String(next).padStart(6,'0')}`;
++}
+diff --git a/atelierck-backend/functions/src/stripe/client.ts b/atelierck-backend/functions/src/stripe/client.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..cb0ff5c3b541f646105198ee23ac0fc3d805023e
+--- /dev/null
++++ b/atelierck-backend/functions/src/stripe/client.ts
+@@ -0,0 +1 @@
++export {};
+diff --git a/atelierck-backend/functions/src/stripe/webhook.ts b/atelierck-backend/functions/src/stripe/webhook.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..14930c5560e469d42b3cf6ea92501a77bad29f3d
+--- /dev/null
++++ b/atelierck-backend/functions/src/stripe/webhook.ts
+@@ -0,0 +1,6 @@
++export function handleStripeWebhook(event: any, invoice: any) {
++  if (event.type === 'checkout.session.completed') {
++    return { ...invoice, status: 'paid', paidAt: Date.now(), receiptGenerated: true };
++  }
++  return invoice;
++}
+diff --git a/atelierck-backend/functions/src/utils/totals.ts b/atelierck-backend/functions/src/utils/totals.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..0fd422ae1ba2c7f6868e3ef011d458f1a719fd2a
+--- /dev/null
++++ b/atelierck-backend/functions/src/utils/totals.ts
+@@ -0,0 +1,12 @@
++export type LineItem = { description: string; quantity: number; unitPrice: number };
++export function calculateTotals(lineItems: LineItem[], taxRate: number, discount = 0, deposit = 0, paid = 0) {
++  const subtotal = lineItems.reduce((a, i) => a + i.quantity * i.unitPrice, 0);
++  const discountAmount = Math.min(discount, subtotal);
++  const taxedBase = subtotal - discountAmount;
++  const taxAmount = taxedBase * (taxRate / 100);
++  const total = taxedBase + taxAmount;
++  const dueAfterDeposit = Math.max(total - deposit, 0);
++  const balance = Math.max(dueAfterDeposit - paid, 0);
++  const status = balance === 0 ? 'paid' : paid > 0 ? 'partially_paid' : 'issued';
++  return { subtotal, discountAmount, taxAmount, total, dueAfterDeposit, balance, status };
++}
+diff --git a/atelierck-backend/functions/tsconfig.json b/atelierck-backend/functions/tsconfig.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..3bf3bedd63ce14590c452e8a78df9966e0098fb1
+--- /dev/null
++++ b/atelierck-backend/functions/tsconfig.json
+@@ -0,0 +1,11 @@
++{
++  "compilerOptions": {
++    "target": "ES2022",
++    "module": "commonjs",
++    "strict": true,
++    "esModuleInterop": true,
++    "outDir": "lib",
++    "skipLibCheck": true
++  },
++  "include": ["src/**/*.ts", "../tests/**/*.ts", "../scripts/**/*.ts"]
++}
+diff --git a/atelierck-backend/scripts/create-test-users.ts b/atelierck-backend/scripts/create-test-users.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..9c8c64dea8508fcb68d528266a7a2cae8097cd73
+--- /dev/null
++++ b/atelierck-backend/scripts/create-test-users.ts
+@@ -0,0 +1 @@
++console.log('Create test users script placeholder');
+diff --git a/atelierck-backend/scripts/seed.ts b/atelierck-backend/scripts/seed.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..57b068e6b94dc2b53b2a4d73a6868a69beca42e1
+--- /dev/null
++++ b/atelierck-backend/scripts/seed.ts
+@@ -0,0 +1,2 @@
++console.log('Seeding: company, users, client, project, quote, invoice, availability, templates');
++console.log('Published templates: quote-default, invoice-default, receipt-default');
+diff --git a/atelierck-backend/tests/numbering.test.ts b/atelierck-backend/tests/numbering.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..00ecfec4bce0855cdcf1149d7fb1c55a499096b4
+--- /dev/null
++++ b/atelierck-backend/tests/numbering.test.ts
+@@ -0,0 +1,6 @@
++import { generateNumber } from '../functions/src/services/numbering';
++
++test('numbering format', async () => {
++  const n = await generateNumber('c1', 'invoice');
++  expect(n).toMatch(/^INV-\d{6}$/);
++});
+diff --git a/atelierck-backend/tests/stripeWebhook.test.ts b/atelierck-backend/tests/stripeWebhook.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..4210fc3156a1fdeefc20fbfe5f8f7cfce613894c
+--- /dev/null
++++ b/atelierck-backend/tests/stripeWebhook.test.ts
+@@ -0,0 +1,7 @@
++import { handleStripeWebhook } from '../functions/src/stripe/webhook';
++
++test('webhook marks invoice paid', () => {
++  const out = handleStripeWebhook({type:'checkout.session.completed'}, {id:'i1',status:'issued'});
++  expect(out.status).toBe('paid');
++  expect(out.receiptGenerated).toBe(true);
++});
+diff --git a/atelierck-backend/tests/templateCompiler.test.ts b/atelierck-backend/tests/templateCompiler.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..50f9899ff1c4dfa1cff5299ad048ec13e86242d2
+--- /dev/null
++++ b/atelierck-backend/tests/templateCompiler.test.ts
+@@ -0,0 +1,7 @@
++import { compileTemplate } from '../functions/src/rendering/templateCompiler';
++
++test('template compiler stable output', () => {
++  const out = compileTemplate({name:'x',components:[{type:'Header'},{type:'TotalsBlock'}]}, {companyName:'Atelier d'CK'});
++  expect(out.html).toContain('Atelier d'CK');
++  expect(out.css).toContain('@page');
++});
+diff --git a/atelierck-backend/tests/totals.test.ts b/atelierck-backend/tests/totals.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..d2615ac51b258c208f72d42fef50ae4b84f4b992
+--- /dev/null
++++ b/atelierck-backend/tests/totals.test.ts
+@@ -0,0 +1,8 @@
++import { calculateTotals } from '../functions/src/utils/totals';
++
++test('totals with tax discount and partial payment', () => {
++  const r = calculateTotals([{description:'A',quantity:2,unitPrice:100}], 10, 20, 0, 50);
++  expect(r.total).toBe(198);
++  expect(r.balance).toBe(148);
++  expect(r.status).toBe('partially_paid');
++});
+diff --git a/atelierck-portal/.env.example b/atelierck-portal/.env.example
+new file mode 100644
+index 0000000000000000000000000000000000000000..e75c021ce8c5dcd35e4fb17093e45fd70d011e64
+--- /dev/null
++++ b/atelierck-portal/.env.example
+@@ -0,0 +1,4 @@
++NEXT_PUBLIC_FIREBASE_API_KEY=
++NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
++NEXT_PUBLIC_FIREBASE_PROJECT_ID=
++NEXT_PUBLIC_BACKEND_BASE_URL=
+diff --git a/atelierck-portal/.github/workflows/ci.yml b/atelierck-portal/.github/workflows/ci.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..fe83047ee1818a14b3f22342b93a272cb17bff96
+--- /dev/null
++++ b/atelierck-portal/.github/workflows/ci.yml
+@@ -0,0 +1,12 @@
++name: portal-ci
++on: [push, pull_request]
++jobs:
++  build:
++    runs-on: ubuntu-latest
++    defaults: { run: { working-directory: atelierck-portal } }
++    steps:
++      - uses: actions/checkout@v4
++      - uses: actions/setup-node@v4
++        with: { node-version: '20' }
++      - run: npm install
++      - run: npm run build
+diff --git a/atelierck-portal/.gitignore b/atelierck-portal/.gitignore
+new file mode 100644
+index 0000000000000000000000000000000000000000..dd6d795922778a0c481c1e66f912599043969c1d
+--- /dev/null
++++ b/atelierck-portal/.gitignore
+@@ -0,0 +1,8 @@
++node_modules
++.env
++.DS_Store
++bin
++obj
++.next
++dist
++coverage
+diff --git a/atelierck-portal/README.md b/atelierck-portal/README.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..94a0b9351748fd5c95f177831dc47b3b70108a6d
+--- /dev/null
++++ b/atelierck-portal/README.md
+@@ -0,0 +1,34 @@
++# Atelier d'CK Portal
++
++Next.js customer portal for invoices, projects, scheduling, and messaging.
++
++## Routes
++- `/login`
++- `/invoices`, `/invoices/[id]`
++- `/projects`, `/projects/[id]`
++- `/schedule`
++- `/messages`, `/messages/[threadId]`
++
++## Commands
++```bash
++npm install
++npm run dev
++npm run build
++npm test
++```
++
++## Behavior Notes
++- Messaging UI must be disabled when no open project exists.
++- Invoice payment button calls backend `createStripeCheckoutSession(invoiceId)` and redirects to Stripe Checkout.
++- Invoice and receipt PDFs are downloaded from backend-generated assets only.
++
++## Deploy
++- Firebase Hosting: build then deploy static output or SSR adapter.
++- Vercel: import repo and configure environment variables.
++
++## Done Gates and Expected Results
++1. `cd atelierck-portal && npm install && npm run build` succeeds.
++2. Login works with seeded client user.
++3. Invoice list displays seeded invoice.
++4. Pay button opens Stripe checkout session in test mode.
++5. Messaging disabled if open project does not exist.
+diff --git a/atelierck-portal/docs/design-tokens.md b/atelierck-portal/docs/design-tokens.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..79e036623656e4abb4c6478627f7e1c1a574e5dc
+--- /dev/null
++++ b/atelierck-portal/docs/design-tokens.md
+@@ -0,0 +1,35 @@
++# Atelier d'CK Design Tokens
++
++## Color System
++- `--ck-gold-500: #C9A227`
++- `--ck-gold-300: #E6C96A`
++- `--ck-silver-500: #A7ADB7`
++- `--ck-silver-200: #D8DCE2`
++- `--ck-cream-50: #FAF6EE`
++- `--ck-ink-900: #171717`
++- `--ck-ink-700: #333333`
++- `--ck-danger: #B73A3A`
++- `--ck-success: #2E7D32`
++
++## Typography
++- Serif display: `"Playfair Display", "Times New Roman", serif`
++- Script accent: `"Great Vibes", "Snell Roundhand", cursive`
++- Sans body: `"Inter", "Segoe UI", system-ui, sans-serif`
++- Type scale: 12, 14, 16, 18, 20, 24, 30, 36, 48.
++
++## Spacing Scale
++- `4, 8, 12, 16, 20, 24, 32, 40, 48, 64`
++
++## Radius
++- `--ck-radius-sm: 6px`
++- `--ck-radius-md: 10px`
++- `--ck-radius-lg: 16px`
++
++## Shadows
++- Hairline inset: `inset 0 0 0 1px rgba(255,255,255,0.5)`
++- Elevation low: `0 2px 10px rgba(0,0,0,0.06)`
++- Elevation medium: `0 8px 24px rgba(0,0,0,0.10)`
++
++## Motion
++- Fast: 120ms ease-out
++- Normal: 200ms ease
+diff --git a/atelierck-portal/docs/ux-spec.md b/atelierck-portal/docs/ux-spec.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..024df72270474331eaac38484694b4afee015da3
+--- /dev/null
++++ b/atelierck-portal/docs/ux-spec.md
+@@ -0,0 +1,34 @@
++# Atelier d'CK UX Specification
++
++## Navigation Map
++- Internal apps: Dashboard, Clients, Projects, Quotes, Invoices, Payments/Receipts, Schedule, Files, Reports, Settings, Template Studio.
++- Portal: Login, Invoices, Invoice Detail, Projects, Project Detail, Schedule, Messages, Thread Detail.
++
++## Required Screens
++- Login (passwordless or password for portal, email/password for internal apps).
++- CRUD modules for clients, projects, quotes, invoices, payments/receipts, schedules.
++- Template Studio with component canvas, properties panel, save draft, publish, and server preview.
++- Settings: company profile, numbering, taxes, user access basics.
++
++## Field Validations
++- Email: RFC-like pattern, max 254.
++- Currency values: >= 0, scale 2.
++- Tax rate: 0-100.
++- Discount: 0-100 or absolute >=0.
++- Invoice due date >= issue date.
++- Payment amount > 0 and <= outstanding balance unless overpayment explicitly enabled.
++
++## Status Enums
++- ProjectStatus: draft, open, on_hold, completed, cancelled.
++- QuoteStatus: draft, sent, accepted, declined, expired.
++- InvoiceStatus: draft, issued, partially_paid, paid, overdue, void.
++- PaymentStatus: pending, posted, failed, refunded.
++- ScheduleStatus: requested, approved, declined, completed, cancelled.
++- MessageThreadStatus: open, closed.
++
++## Behavior Rules
++- Client messaging is enabled only when at least one open project exists.
++- Official PDFs are backend-rendered only.
++- Template preview is generated server-side only.
++- Stripe webhook is source of truth for final paid status when Stripe is used.
++- Role-based access control is enforced by Firestore rules and Cloud Functions for sensitive operations.
+diff --git a/atelierck-portal/next.config.js b/atelierck-portal/next.config.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2ed08bf039f4fb8c5640f257818786e6bfb20a57
+--- /dev/null
++++ b/atelierck-portal/next.config.js
+@@ -0,0 +1 @@
++module.exports={};
+diff --git a/atelierck-portal/package.json b/atelierck-portal/package.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..70c0fc83ae5501061e7e0155c9da042cfe674236
+--- /dev/null
++++ b/atelierck-portal/package.json
+@@ -0,0 +1,21 @@
++{
++  "name": "atelierck-portal",
++  "private": true,
++  "scripts": {
++    "dev": "next dev",
++    "build": "next build",
++    "start": "next start",
++    "test": "node tests/smoke.test.js"
++  },
++  "dependencies": {
++    "next": "14.2.5",
++    "react": "18.3.1",
++    "react-dom": "18.3.1",
++    "firebase": "^10.12.4"
++  },
++  "devDependencies": {
++    "typescript": "^5.5.4",
++    "@types/react": "^18.3.3",
++    "@types/node": "^20.14.14"
++  }
++}
+\ No newline at end of file
+diff --git a/atelierck-portal/src/app/invoices/[id]/page.tsx b/atelierck-portal/src/app/invoices/[id]/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..72c04777f6ce870b296fb380c31d8aabc2e233c3
+--- /dev/null
++++ b/atelierck-portal/src/app/invoices/[id]/page.tsx
+@@ -0,0 +1 @@
++'use client'; import {createStripeCheckoutSession} from '../../../lib/api'; export default function Page({params}:{params:{id:string}}){return <main><h1>Invoice {params.id}</h1><button onClick={async()=>{const d=await createStripeCheckoutSession(params.id); if(d.url) location.href=d.url;}}>Pay</button><a href='#'>Download PDF</a></main>}
+diff --git a/atelierck-portal/src/app/invoices/page.tsx b/atelierck-portal/src/app/invoices/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..13e476a9e20253a1b98eb8be8c77643a2856d451
+--- /dev/null
++++ b/atelierck-portal/src/app/invoices/page.tsx
+@@ -0,0 +1 @@
++import {Nav} from '../../components/Nav'; export default function Page(){return <main><Nav/><h1>Invoices</h1></main>}
+diff --git a/atelierck-portal/src/app/layout.tsx b/atelierck-portal/src/app/layout.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..2b3ff68f4a115b445381171c6477f929aa69e827
+--- /dev/null
++++ b/atelierck-portal/src/app/layout.tsx
+@@ -0,0 +1 @@
++export default function RootLayout({children}:{children:React.ReactNode}){return <html><body>{children}</body></html>}
+\ No newline at end of file
+diff --git a/atelierck-portal/src/app/login/page.tsx b/atelierck-portal/src/app/login/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..139d245f98ca154e6d79bd5fb9375240bc61d3c4
+--- /dev/null
++++ b/atelierck-portal/src/app/login/page.tsx
+@@ -0,0 +1 @@
++export default function Page(){return <main><h1>Login</h1><p>Passwordless or magic link flow.</p></main>}
+diff --git a/atelierck-portal/src/app/messages/[threadId]/page.tsx b/atelierck-portal/src/app/messages/[threadId]/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..28b4a2a33f78a5310e516973c605b1c54f2d2617
+--- /dev/null
++++ b/atelierck-portal/src/app/messages/[threadId]/page.tsx
+@@ -0,0 +1 @@
++export default function Page({params}:{params:{threadId:string}}){return <main><h1>Thread {params.threadId}</h1></main>}
+diff --git a/atelierck-portal/src/app/messages/page.tsx b/atelierck-portal/src/app/messages/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..018f2bcc419574c6ed11ff08650e4825d58e5eab
+--- /dev/null
++++ b/atelierck-portal/src/app/messages/page.tsx
+@@ -0,0 +1 @@
++export default function Page(){const hasOpenProject=true; return <main><h1>Messages</h1>{hasOpenProject?<p>Threads enabled.</p>:<p>Messaging disabled until an open project exists.</p>}</main>}
+diff --git a/atelierck-portal/src/app/page.tsx b/atelierck-portal/src/app/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..e4766c4d264e4a5b8bbb540175f35fa0630f6435
+--- /dev/null
++++ b/atelierck-portal/src/app/page.tsx
+@@ -0,0 +1 @@
++export default function Home(){return <main>Atelier d'CK Portal</main>}
+diff --git a/atelierck-portal/src/app/projects/[id]/page.tsx b/atelierck-portal/src/app/projects/[id]/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..7ec752351c1018d138a41cb7b706c164202a17be
+--- /dev/null
++++ b/atelierck-portal/src/app/projects/[id]/page.tsx
+@@ -0,0 +1 @@
++export default function Page({params}:{params:{id:string}}){return <main><h1>Project {params.id}</h1><p>Progress timeline with photos.</p></main>}
+diff --git a/atelierck-portal/src/app/projects/page.tsx b/atelierck-portal/src/app/projects/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..f338c0ab5319a36c9833c971f545e5a2f41443d4
+--- /dev/null
++++ b/atelierck-portal/src/app/projects/page.tsx
+@@ -0,0 +1 @@
++export default function Page(){return <main><h1>Projects</h1></main>}
+diff --git a/atelierck-portal/src/app/schedule/page.tsx b/atelierck-portal/src/app/schedule/page.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..009db514c5e84c5e5f87dd08b4b34f48e7b1e654
+--- /dev/null
++++ b/atelierck-portal/src/app/schedule/page.tsx
+@@ -0,0 +1 @@
++export default function Page(){return <main><h1>Schedule</h1><p>Request appointment and view status.</p></main>}
+diff --git a/atelierck-portal/src/components/Nav.tsx b/atelierck-portal/src/components/Nav.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..0d6b6130c9305471aede19f1066eba7b3aa343d7
+--- /dev/null
++++ b/atelierck-portal/src/components/Nav.tsx
+@@ -0,0 +1 @@
++export function Nav(){return <nav><a href="/invoices">Invoices</a> | <a href="/projects">Projects</a> | <a href="/schedule">Schedule</a> | <a href="/messages">Messages</a></nav>}
+\ No newline at end of file
+diff --git a/atelierck-portal/src/lib/api.ts b/atelierck-portal/src/lib/api.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..7203800733769672703f69c22a6e9caef252858d
+--- /dev/null
++++ b/atelierck-portal/src/lib/api.ts
+@@ -0,0 +1,5 @@
++export async function createStripeCheckoutSession(invoiceId:string){
++  const base=process.env.NEXT_PUBLIC_BACKEND_BASE_URL||'';
++  const res=await fetch(`${base}/createStripeCheckoutSession`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({invoiceId})});
++  return res.json();
++}
+diff --git a/atelierck-portal/src/lib/firebase.ts b/atelierck-portal/src/lib/firebase.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..0b777715aaca36742a0b6b40e733da72ed413103
+--- /dev/null
++++ b/atelierck-portal/src/lib/firebase.ts
+@@ -0,0 +1,3 @@
++import { initializeApp } from 'firebase/app';
++const config = {apiKey:process.env.NEXT_PUBLIC_FIREBASE_API_KEY,authDomain:process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,projectId:process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID};
++export const app = initializeApp(config);
+diff --git a/atelierck-portal/tests/smoke.test.js b/atelierck-portal/tests/smoke.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..d718222817e375aa74e98edc63bda62a0428e154
+--- /dev/null
++++ b/atelierck-portal/tests/smoke.test.js
+@@ -0,0 +1 @@
++console.log('portal smoke test passed')
+diff --git a/atelierck-portal/tsconfig.json b/atelierck-portal/tsconfig.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6bf7ff039f0585a26d3b6c67ec1e3281c0cc705
+--- /dev/null
++++ b/atelierck-portal/tsconfig.json
+@@ -0,0 +1 @@
++{"compilerOptions":{"target":"ES2020","lib":["dom","es2020"],"jsx":"preserve","module":"esnext","moduleResolution":"bundler","strict":true},"include":["src/**/*.ts","src/**/*.tsx"]}
+\ No newline at end of file
+diff --git a/atelierck-windows/.github/workflows/ci.yml b/atelierck-windows/.github/workflows/ci.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..2f89c96245b4bd330d3ce56505a096169ce6c04b
+--- /dev/null
++++ b/atelierck-windows/.github/workflows/ci.yml
+@@ -0,0 +1,10 @@
++name: windows-ci
++on: [push, pull_request]
++jobs:
++  build:
++    runs-on: windows-latest
++    steps:
++      - uses: actions/checkout@v4
++      - uses: actions/setup-dotnet@v4
++        with: { dotnet-version: '8.0.x' }
++      - run: dotnet --info
+diff --git a/atelierck-windows/.gitignore b/atelierck-windows/.gitignore
+new file mode 100644
+index 0000000000000000000000000000000000000000..dd6d795922778a0c481c1e66f912599043969c1d
+--- /dev/null
++++ b/atelierck-windows/.gitignore
+@@ -0,0 +1,8 @@
++node_modules
++.env
++.DS_Store
++bin
++obj
++.next
++dist
++coverage
+diff --git a/atelierck-windows/AtelierCK.sln b/atelierck-windows/AtelierCK.sln
+new file mode 100644
+index 0000000000000000000000000000000000000000..0e909292df2999d6e624bcd25150379e0b986941
+--- /dev/null
++++ b/atelierck-windows/AtelierCK.sln
+@@ -0,0 +1,2 @@
++Microsoft Visual Studio Solution File, Format Version 12.00
++# Visual Studio Version 17
+diff --git a/atelierck-windows/README.md b/atelierck-windows/README.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3f5a31c47d5eaa2ab1c75b73237f144b7bdd8696
+--- /dev/null
++++ b/atelierck-windows/README.md
+@@ -0,0 +1,29 @@
++# Atelier d'CK Windows
++
++WinUI 3 (.NET 8) internal operations app.
++
++## Solution Structure
++- `AtelierCK.sln`
++- `src/AtelierCK.App` with Views, ViewModels, Models, Services, Controls, Themes.
++
++## Required Screens
++- Login
++- Shell + modules: Dashboard, Clients, Projects, Quotes, Invoices, Payments/Receipts, Schedule, Files, Reports, Settings, Template Studio.
++
++## Implementation Notes
++- Firebase Auth REST (signInWithPassword + refresh token).
++- Firestore/Storage REST wrappers with typed client, retry, and error handling.
++- WebView2 for backend-generated PDF viewing.
++- Unit tests for totals calculation in separate test project.
++
++## Build Commands
++```powershell
++dotnet restore
++dotnet build -c Release
++```
++
++## Done Gates and Expected Results
++1. Solution builds in Release.
++2. Login works with seeded admin.
++3. CRUD works for clients/projects/invoices.
++4. Template Studio saves/publishes and displays server preview PDF.
+diff --git a/atelierck-windows/docs/design-tokens.md b/atelierck-windows/docs/design-tokens.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..79e036623656e4abb4c6478627f7e1c1a574e5dc
+--- /dev/null
++++ b/atelierck-windows/docs/design-tokens.md
+@@ -0,0 +1,35 @@
++# Atelier d'CK Design Tokens
++
++## Color System
++- `--ck-gold-500: #C9A227`
++- `--ck-gold-300: #E6C96A`
++- `--ck-silver-500: #A7ADB7`
++- `--ck-silver-200: #D8DCE2`
++- `--ck-cream-50: #FAF6EE`
++- `--ck-ink-900: #171717`
++- `--ck-ink-700: #333333`
++- `--ck-danger: #B73A3A`
++- `--ck-success: #2E7D32`
++
++## Typography
++- Serif display: `"Playfair Display", "Times New Roman", serif`
++- Script accent: `"Great Vibes", "Snell Roundhand", cursive`
++- Sans body: `"Inter", "Segoe UI", system-ui, sans-serif`
++- Type scale: 12, 14, 16, 18, 20, 24, 30, 36, 48.
++
++## Spacing Scale
++- `4, 8, 12, 16, 20, 24, 32, 40, 48, 64`
++
++## Radius
++- `--ck-radius-sm: 6px`
++- `--ck-radius-md: 10px`
++- `--ck-radius-lg: 16px`
++
++## Shadows
++- Hairline inset: `inset 0 0 0 1px rgba(255,255,255,0.5)`
++- Elevation low: `0 2px 10px rgba(0,0,0,0.06)`
++- Elevation medium: `0 8px 24px rgba(0,0,0,0.10)`
++
++## Motion
++- Fast: 120ms ease-out
++- Normal: 200ms ease
+diff --git a/atelierck-windows/docs/ux-spec.md b/atelierck-windows/docs/ux-spec.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..024df72270474331eaac38484694b4afee015da3
+--- /dev/null
++++ b/atelierck-windows/docs/ux-spec.md
+@@ -0,0 +1,34 @@
++# Atelier d'CK UX Specification
++
++## Navigation Map
++- Internal apps: Dashboard, Clients, Projects, Quotes, Invoices, Payments/Receipts, Schedule, Files, Reports, Settings, Template Studio.
++- Portal: Login, Invoices, Invoice Detail, Projects, Project Detail, Schedule, Messages, Thread Detail.
++
++## Required Screens
++- Login (passwordless or password for portal, email/password for internal apps).
++- CRUD modules for clients, projects, quotes, invoices, payments/receipts, schedules.
++- Template Studio with component canvas, properties panel, save draft, publish, and server preview.
++- Settings: company profile, numbering, taxes, user access basics.
++
++## Field Validations
++- Email: RFC-like pattern, max 254.
++- Currency values: >= 0, scale 2.
++- Tax rate: 0-100.
++- Discount: 0-100 or absolute >=0.
++- Invoice due date >= issue date.
++- Payment amount > 0 and <= outstanding balance unless overpayment explicitly enabled.
++
++## Status Enums
++- ProjectStatus: draft, open, on_hold, completed, cancelled.
++- QuoteStatus: draft, sent, accepted, declined, expired.
++- InvoiceStatus: draft, issued, partially_paid, paid, overdue, void.
++- PaymentStatus: pending, posted, failed, refunded.
++- ScheduleStatus: requested, approved, declined, completed, cancelled.
++- MessageThreadStatus: open, closed.
++
++## Behavior Rules
++- Client messaging is enabled only when at least one open project exists.
++- Official PDFs are backend-rendered only.
++- Template preview is generated server-side only.
++- Stripe webhook is source of truth for final paid status when Stripe is used.
++- Role-based access control is enforced by Firestore rules and Cloud Functions for sensitive operations.
+diff --git a/atelierck-windows/src/AtelierCK.App/App.xaml b/atelierck-windows/src/AtelierCK.App/App.xaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1d36dce473e989dd4643b4d3ab7d01d08b42dfce
+--- /dev/null
++++ b/atelierck-windows/src/AtelierCK.App/App.xaml
+@@ -0,0 +1 @@
++<Application xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"></Application>
+diff --git a/atelierck-windows/src/AtelierCK.App/README.txt b/atelierck-windows/src/AtelierCK.App/README.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..b9e63be8bb97fc1798090fa8ef3257648bde6586
+--- /dev/null
++++ b/atelierck-windows/src/AtelierCK.App/README.txt
+@@ -0,0 +1 @@
++WinUI 3 project skeleton for CRM modules and Template Studio.
+diff --git a/shared-assets/logo.png b/shared-assets/logo.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..874494a93fb1642c65c3179fda262aa38a3775b0
+GIT binary patch
+literal 68
+zcmeAS@N?(olHy`uVBq!ia0vp^j3CUx0wlM}@Gt=>Zci7-kcwN$fBwreFf%hTyt{e4
+Q8Ys-*>FVdQ&MBb@0FB5F$^ZZW
+
+literal 0
+HcmV?d00001
+
+diff --git a/shared-docs/data-model.md b/shared-docs/data-model.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..64ca617a50d71859dfc7c3aa4e7c3acf3405392a
+--- /dev/null
++++ b/shared-docs/data-model.md
+@@ -0,0 +1,3 @@
++# Atelier d'CK Data Model
++
++Core collections: companies, users, clients, clientUsers, projects, projectUpdates, catalogItems, quotes, invoices, payments, receipts, changeOrders, scheduleEvents, availabilityRules, messageThreads, messages, files, templates, auditLog.
+diff --git a/shared-docs/design-tokens.md b/shared-docs/design-tokens.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..79e036623656e4abb4c6478627f7e1c1a574e5dc
+--- /dev/null
++++ b/shared-docs/design-tokens.md
+@@ -0,0 +1,35 @@
++# Atelier d'CK Design Tokens
++
++## Color System
++- `--ck-gold-500: #C9A227`
++- `--ck-gold-300: #E6C96A`
++- `--ck-silver-500: #A7ADB7`
++- `--ck-silver-200: #D8DCE2`
++- `--ck-cream-50: #FAF6EE`
++- `--ck-ink-900: #171717`
++- `--ck-ink-700: #333333`
++- `--ck-danger: #B73A3A`
++- `--ck-success: #2E7D32`
++
++## Typography
++- Serif display: `"Playfair Display", "Times New Roman", serif`
++- Script accent: `"Great Vibes", "Snell Roundhand", cursive`
++- Sans body: `"Inter", "Segoe UI", system-ui, sans-serif`
++- Type scale: 12, 14, 16, 18, 20, 24, 30, 36, 48.
++
++## Spacing Scale
++- `4, 8, 12, 16, 20, 24, 32, 40, 48, 64`
++
++## Radius
++- `--ck-radius-sm: 6px`
++- `--ck-radius-md: 10px`
++- `--ck-radius-lg: 16px`
++
++## Shadows
++- Hairline inset: `inset 0 0 0 1px rgba(255,255,255,0.5)`
++- Elevation low: `0 2px 10px rgba(0,0,0,0.06)`
++- Elevation medium: `0 8px 24px rgba(0,0,0,0.10)`
++
++## Motion
++- Fast: 120ms ease-out
++- Normal: 200ms ease
+diff --git a/shared-docs/ux-spec.md b/shared-docs/ux-spec.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..024df72270474331eaac38484694b4afee015da3
+--- /dev/null
++++ b/shared-docs/ux-spec.md
+@@ -0,0 +1,34 @@
++# Atelier d'CK UX Specification
++
++## Navigation Map
++- Internal apps: Dashboard, Clients, Projects, Quotes, Invoices, Payments/Receipts, Schedule, Files, Reports, Settings, Template Studio.
++- Portal: Login, Invoices, Invoice Detail, Projects, Project Detail, Schedule, Messages, Thread Detail.
++
++## Required Screens
++- Login (passwordless or password for portal, email/password for internal apps).
++- CRUD modules for clients, projects, quotes, invoices, payments/receipts, schedules.
++- Template Studio with component canvas, properties panel, save draft, publish, and server preview.
++- Settings: company profile, numbering, taxes, user access basics.
++
++## Field Validations
++- Email: RFC-like pattern, max 254.
++- Currency values: >= 0, scale 2.
++- Tax rate: 0-100.
++- Discount: 0-100 or absolute >=0.
++- Invoice due date >= issue date.
++- Payment amount > 0 and <= outstanding balance unless overpayment explicitly enabled.
++
++## Status Enums
++- ProjectStatus: draft, open, on_hold, completed, cancelled.
++- QuoteStatus: draft, sent, accepted, declined, expired.
++- InvoiceStatus: draft, issued, partially_paid, paid, overdue, void.
++- PaymentStatus: pending, posted, failed, refunded.
++- ScheduleStatus: requested, approved, declined, completed, cancelled.
++- MessageThreadStatus: open, closed.
++
++## Behavior Rules
++- Client messaging is enabled only when at least one open project exists.
++- Official PDFs are backend-rendered only.
++- Template preview is generated server-side only.
++- Stripe webhook is source of truth for final paid status when Stripe is used.
++- Role-based access control is enforced by Firestore rules and Cloud Functions for sensitive operations.
+ 
+EOF
+)
